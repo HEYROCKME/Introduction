@@ -26,7 +26,7 @@ ground_surface = pygame.image.load('graphics/ground.png').convert_alpha()
 text_surface = test_font.render('THE GAME', True, 'black')
 
 snail_surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-print(snail_surface)
+snail_rect = snail_surface.get_rect(midbottom=(700, 300))
 snail_x_position = 600
 
 player_surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
@@ -46,10 +46,11 @@ while True:
     screen.blit(ground_surface, (0, 300))
     screen.blit(text_surface, (150, 20))
     # moving items
-    snail_x_position -= 5
-    if snail_x_position <= -72:
-        snail_x_position = 800
-    screen.blit(snail_surface, (snail_x_position, 265))
+    snail_rect.x -= 5
+    if snail_rect.right <= -1:
+        snail_rect.x = 800
+    screen.blit(snail_surface, snail_rect)
+    player_rect.left +=1
     screen.blit(player_surface, player_rect)
 
     # update everything
