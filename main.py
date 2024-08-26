@@ -18,7 +18,11 @@ def display_gameOver():
     playAgain_rect = playAgain_surf.get_rect(center = (400, 350))
     screen.blit(playAgain_surf, playAgain_rect)
 
-
+# Collisions
+def collisions(player, obstacles):
+    for obstacle_rect in obstacles:
+        if player.colliderect(obstacle_rect): return False
+    return True
 # Pygame init
 pygame.init()
 # seting up a display surface
@@ -37,7 +41,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Runner')
 
 # Game play
-game_active = True
+game_active = False
 start_time = 0
 score = 0
 
@@ -160,8 +164,8 @@ while True:
 
 
         # Collision
-        # if snail_rect.colliderect(player_rect):
-        #   game_active = False
+        
+        game_active = collisions(player_rect, obstacle_rect_list)
             
 
         # if player_rect.colliderect(snail_rect):
@@ -178,7 +182,10 @@ while True:
         # display_gameOver()
         screen.fill((94, 129, 162))
         screen.blit(player_stand, player_stand_rect)
-
+        obstacle_rect_list.clear()
+        playAgain_rect.midbottom = (80, 300)
+        player_gravity = 0
+        
         score_message = gui_font.render(f'Your score: {score}', False, 'white')
         score_message_rect = score_message.get_rect(center=(400, player_stand_rect.bottom + 10))
         screen.blit(title_surf, title_rect)
