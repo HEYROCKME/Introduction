@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint
 
 
 
@@ -59,7 +60,20 @@ gameOver_rect = gameOver_surface.get_rect(center = (WIDTH / 2, 200))
 
 snail_surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 snail_rect = snail_surface.get_rect(midbottom=(700, 300))
-snail_x_position = 600
+# snail_x_position = 600
+
+obstacle_rect_list = []
+def obstacle_movement(obstacle_list):
+    if obstacle_list:
+        for obstacle_rect in obstacle_list:
+            obstacle_rect.x -= 5
+            
+
+            screen.blit(snail_surface, obstacle_rect)
+        # Remove rectangles that are of screen
+        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x >= -100 ]
+        return obstacle_list
+    else: return []
 
 # Player
 player_surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
@@ -78,7 +92,7 @@ playAgain_rect = playAgain_surf.get_rect(center = (400, 380))
 
 # Timer
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 900)
+pygame.time.set_timer(obstacle_timer, 1400)
 
 # Game Loop
 while True:
@@ -106,6 +120,7 @@ while True:
                     print(game_active)
         if event.type == obstacle_timer and game_active:
             print('obstacle')
+            obstacle_rect_list.append(snail_surface.get_rect(bottomright=( randint(900, 1100), 300)))
 
     if game_active:
     # draw all elements in sequence 
@@ -118,16 +133,21 @@ while True:
         # screen.blit(score_surface, score_rect)
         score = display_score()
         # moving items
-        snail_rect.x -= 5
-        if snail_rect.right <= -1:
-            snail_rect.x = 800
-        screen.blit(snail_surface, snail_rect)
+        # snail_rect.x -= 5
+        # if snail_rect.right <= -1:
+        #     snail_rect.x = 800
+        # screen.blit(snail_surface, snail_rect)
         
         # Player
         player_gravity += 1
         player_rect.y += player_gravity
         if player_rect.bottom >= 300: player_rect.bottom=300    
         screen.blit(player_surface, player_rect)
+
+
+        # Obstacle movement
+        obstacle_rect_list = obstacle_movement(obstacle_rect_list)
+
 
         # Collision
         if snail_rect.colliderect(player_rect):
