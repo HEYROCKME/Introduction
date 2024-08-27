@@ -2,6 +2,45 @@ import pygame
 from sys import exit
 from random import randint
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        player_walk_1 = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+        player_walk_2 = pygame.image.load('graphics/player/player_walk_2.png').convert_alpha()
+        self.jump = pygame.image.load('graphics/player/jump.png').convert_alpha()
+        self.walk = [player_walk_1, player_walk_2]
+        self.walk_index = 0
+        self.image = self.walk[self.walk_index]
+        self.rect = self.image.get_rect(midbottom = (200, 300 ))
+        self.gravity = 0
+
+    def player_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.gravity = -20
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 300: 
+            self.rect.bottom = 300
+    
+    def animation(self):
+            # player jumping when off ground
+        if self.rect.bottom < 300:
+            self.player_surf = self.jump
+        else:
+        # player walking when on ground
+            self.walk_index += 0.1
+            if self.walk_index >= len(self.walk):
+                self.walk_index = 0
+            self.image = self.walk[int(self.walk_index)]
+
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+        self.animation()
+
 
 
 def display_score():
@@ -93,6 +132,12 @@ def obstacle_movement(obstacle_list):
     else: return []
 
 # Player
+
+
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+
+
 def player_animation():
     global player_surf, player_walk_index
 
@@ -188,9 +233,10 @@ while True:
         player_gravity += 1
         player_rect.y += player_gravity
         if player_rect.bottom >= 300: player_rect.bottom=300    
-        screen.blit(player_surf, player_rect)
         player_animation()
-
+        screen.blit(player_surf, player_rect)
+        player.draw(screen)
+        player.update()
         # Obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
